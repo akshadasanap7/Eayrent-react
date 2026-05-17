@@ -7,7 +7,7 @@ A modern rental property listing application built with **React + Vite**.
 | | URL |
 |---|---|
 | 🌐 **Live App (Client)** | https://easyrent-react.vercel.app *(deploy to update)* |
-| 📦 **Repository** | https://github.com/your-username/easyrent-react |
+| 📦 **Repository** | https://github.com/akshadasanap7/Eayrent-react |
 
 > **To deploy:** Push this repo to GitHub, then connect to [Vercel](https://vercel.com) or [Netlify](https://netlify.com) for instant hosting.
 
