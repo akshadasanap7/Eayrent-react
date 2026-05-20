@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useLang } from '../context/LanguageContext';
 
 const navLinks = [
+  { to: '/', label: 'Home' },
   { to: '/listings', label: 'Listings' },
   { to: '/blog', label: 'Blog' },
   { to: '/about', label: 'About' },
@@ -10,36 +11,57 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { lang, setLang, t } = useLang();
+  const { lang, setLang } = useLang();
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => setMenuOpen(false), [pathname]);
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <Link to="/" className="nav-brand">
-        <span className="brand-icon">🏠</span>
-        <span>Easy<span className="gold">Rent</span></span>
+        <div className="brand-logo">🏠</div>
+        <span>Easy<span className="brand-gold">Rent</span></span>
       </Link>
 
-      <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
+      <div className={`nav-links${menuOpen ? ' open' : ''}`}>
         {navLinks.map(({ to, label }) => (
-          <Link key={to} to={to} className={pathname === to ? 'active' : ''} onClick={() => setMenuOpen(false)}>
+          <Link
+            key={to}
+            to={to}
+            className={`nav-link${pathname === to ? ' active' : ''}`}
+          >
             {label}
+            {pathname === to && <span className="nav-active-dot" />}
           </Link>
         ))}
-        <Link to="/listings" className="btn-nav-cta" onClick={() => setMenuOpen(false)}>Find a Home</Link>
       </div>
 
       <div className="nav-right">
         <div className="lang-switcher">
-          {['en', 'fr', 'es'].map(l => (
-            <button key={l} onClick={() => setLang(l)} className={lang === l ? 'lang-btn active' : 'lang-btn'}>
-              {l.toUpperCase()}
+          {[{ code: 'en', flag: '🇬🇧' }, { code: 'fr', flag: '🇫🇷' }, { code: 'es', flag: '🇪🇸' }].map(({ code, flag }) => (
+            <button
+              key={code}
+              onClick={() => setLang(code)}
+              className={`lang-btn${lang === code ? ' active' : ''}`}
+              title={code.toUpperCase()}
+            >
+              {flag}
             </button>
           ))}
         </div>
-        <button className="hamburger" onClick={() => setMenuOpen(v => !v)}>
-          {menuOpen ? '✕' : '☰'}
+        <Link to="/listings" className="btn-nav-cta">Find a Home</Link>
+        <button className="hamburger" onClick={() => setMenuOpen(v => !v)} aria-label="menu">
+          <span className={`ham-line${menuOpen ? ' open' : ''}`} />
+          <span className={`ham-line${menuOpen ? ' open' : ''}`} />
+          <span className={`ham-line${menuOpen ? ' open' : ''}`} />
         </button>
       </div>
     </nav>
